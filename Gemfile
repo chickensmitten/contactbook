@@ -16,10 +16,12 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem "figaro"
 
 gem "puma"
+gem 'sidekiq'
 
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano3-puma'
+  gem 'capistrano-sidekiq', require: false
   gem 'capistrano-rails', require: false
   gem 'capistrano-bundler', require: false
   gem 'capistrano-rvm'  
