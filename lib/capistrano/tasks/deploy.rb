@@ -4,31 +4,22 @@ namespace :sidekiq do
       puts capture("pgrep -f 'workers' | xargs kill -USR1") 
     end
   end
+  desc "Start sidekiq workers"
+  task :start do
+    sudo "/sbin/start workers"
+  end
+  desc "Stop sidekiq workers"
+  task :stop, :on_error => :continue do
+    sudo "/sbin/stop workers"
+  end
+  desc "Restart sidekiq workers"
   task :restart do
-    on roles(:app) do
-      execute :sudo, :initctl, :restart, :workers
-    end
+    stop
+    start
   end
 end
+
 
 after 'deploy:starting', 'sidekiq:quiet'
 after 'deploy:reverted', 'sidekiq:restart'
 after 'deploy:published', 'sidekiq:restart'
-
-# If you wish to use Inspeqtor to monitor Sidekiq
-# https://github.com/mperham/inspeqtor/wiki/Deployments
-namespace :inspeqtor do
-  task :start do
-    on roles(:app) do
-      execute :inspeqtorctl, :start, :deploy
-    end
-  end
-  task :finish do
-    on roles(:app) do
-      execute :inspeqtorctl, :finish, :deploy
-    end
-  end
-end
-
-before 'deploy:starting', 'inspeqtor:start'
-after 'deploy:finished', 'inspeqtor:finish'
